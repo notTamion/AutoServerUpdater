@@ -14,6 +14,7 @@ public final class AutoServerUpdater extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Metrics metrics = new Metrics(this, 19591);
         File serverjar = new File(System.getProperty("java.class.path"));
         String[] buildversion = Bukkit.getVersion().split(" ");
         try {
