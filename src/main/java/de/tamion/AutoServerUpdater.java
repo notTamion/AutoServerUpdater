@@ -14,13 +14,12 @@ public final class AutoServerUpdater extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Metrics metrics = new Metrics(this, 19591);
         File serverjar = new File(System.getProperty("java.class.path"));
         String[] buildversion = Bukkit.getVersion().split(" ");
+        String version = buildversion[2].replaceAll("\\)", "");
         try {
             if (buildversion[0].contains("Paper")) {
                 String build = buildversion[0].replaceAll("git-Paper-", "");
-                String version = buildversion[2].replaceAll("\\)", "");
                 String[] builds = new ObjectMapper().readTree(new URL("https://api.papermc.io/v2/projects/paper/versions/" + version)).get("builds").toString().replaceAll("\\[", "").replaceAll("]", "").split(",");
                 String latestbuild = builds[builds.length - 1];
                 if (!latestbuild.equals(build)) {
@@ -32,7 +31,6 @@ public final class AutoServerUpdater extends JavaPlugin {
                 }
             } else if (buildversion[0].contains("Purpur")) {
                 String build = buildversion[0].replaceAll("git-Purpur-", "");
-                String version = buildversion[2].replaceAll("\\)", "");
                 String latestbuild = new ObjectMapper().readTree(new URL("https://api.purpurmc.org/v2/purpur/" + version + "/latest")).get("build").asText();
                 if (!latestbuild.equals(build)) {
                     getLogger().warning("Old Purpur build detected. Updating from build " + build + " to " + latestbuild);
@@ -43,10 +41,9 @@ public final class AutoServerUpdater extends JavaPlugin {
                 }
             } else {
                 getLogger().log(Level.SEVERE, "SERVER SOFTWARE NOT SUPPORTED BY AUTOSERVERUPDATER");
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
             }
             getLogger().info("Latest Build installed!");
+            Bukkit.getPluginManager().disablePlugin(this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
